@@ -87,7 +87,12 @@ class App extends Component {
   };
 
   getSearchBar = () => {
-    return <SearchBar />;
+    const { studios: { list } } = this.state;
+    const arr = list.map(item => item.params);
+    const result = [].concat(...arr);
+    const data = Array.from(new Set(result));
+
+    return <SearchBar params={data} />;
   };
 
   getFilterPrice = () => {
