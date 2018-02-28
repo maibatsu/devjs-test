@@ -12,7 +12,7 @@ const { Option } = AutoComplete;
 )); */
 
 const SearchBar = ({ params }) => (
-  <div className="certain-category-search-wrapper" style={{ width: 250 }}>
+  <div className="certain-category-search-wrapper">
     <AutoComplete
       disabled
       className="certain-category-search"

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'antd';
-import logo from './logo.svg';
+import { Row, Col, Layout } from 'antd';
+import logo from './logo.png';
 import './App.css';
 import Teaser from './components/Teaser';
 import FilterPrice from './components/FilterPrice';
@@ -108,28 +108,30 @@ class App extends Component {
   };
 
   render() {
+    const { Header, Content } = Layout;
     const { studios, prices } = this.state;
 
     if (!studios.loaded && !prices.loaded) return null;
 
     return (
-      <div className="App">
-        <header className="App-header">
+      <Layout className="App">
+        <Header className="App-header" style={{ backgroundColor: 'transparent' }}>
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <div className="container">
+        </Header>
+        <Content className="container">
           <Row type="flex" justify="space-around">
             <Col span={18}>{this.getTeaser()}</Col>
             <Col span={6}>
               <div className="filters-list">
-                <div className="filters-list__item">{this.getSearchBar()}</div>
+                <div className="filters-list__item filters-list__item--search">
+                  {this.getSearchBar()}
+                </div>
                 <div className="filters-list__item">{this.getFilterPrice()}</div>
               </div>
             </Col>
           </Row>
-        </div>
-      </div>
+        </Content>
+      </Layout>
     );
   }
 }

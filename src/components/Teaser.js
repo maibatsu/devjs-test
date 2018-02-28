@@ -1,18 +1,14 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { Card } from "antd";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Card } from 'antd';
 
 const Teaser = ({ name, price, view }) => {
   const { Meta } = Card;
 
   return (
-    <Card
-      hoverable
-      cover={<img alt={name} src={view[0]} />}
-      style={{ width: 300, margin: 16 }}
-    >
+    <Card hoverable cover={<img alt={name} src={view[0]} />} style={{ width: 300, margin: 16 }}>
       <div className="card-price">{`${price} ₽`}</div>
-      <Meta title={name} />
+      <Meta title={name} style={{ textAlign: 'center' }} />
     </Card>
   );
 };
@@ -23,8 +19,8 @@ Teaser.propTypes = {
     price: PropTypes.number.isRequired,
     view: PropTypes.arrayOf(PropTypes.string).isRequired,
     params: PropTypes.arrayOf(PropTypes.string),
-    id: PropTypes.number.isRequired
-  })
+    id: PropTypes.number.isRequired,
+  }),
 };
 
 export default Teaser;
