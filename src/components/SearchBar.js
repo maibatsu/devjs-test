@@ -2,19 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Icon, Input, AutoComplete } from 'antd';
 
-const { Option } = AutoComplete;
-
-/* const options = dataSource.map(group => (
-  <Option key={opt.title} value={opt.title}>
-    {opt.title}
-    <span className="certain-search-item-count">{opt.count} 人 关注</span>
-  </Option>
-)); */
-
-const SearchBar = ({ params }) => (
-  <div className="certain-category-search-wrapper">
+const SearchBar = ({ params, onSelect }) => (
+  <div className="search-bar">
     <AutoComplete
-      disabled
       className="certain-category-search"
       dropdownClassName="certain-category-search-dropdown"
       dropdownMatchSelectWidth={false}
@@ -22,7 +12,12 @@ const SearchBar = ({ params }) => (
       size="large"
       style={{ width: '100%' }}
       dataSource={params}
-      placeholder="input here"
+      value=""
+      onSelect={onSelect}
+      // placeholder="умный поиск (нет)"
+      filterOption={(inputValue, option) =>
+        option.props.children.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+      }
       optionLabelProp="value"
     >
       <Input suffix={<Icon type="search" className="certain-category-icon" />} />
@@ -31,7 +26,8 @@ const SearchBar = ({ params }) => (
 );
 
 SearchBar.propTypes = {
-  params: PropTypes.arrayOf(PropTypes.string),
+  params: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onSelect: PropTypes.func.isRequired,
 };
 
 export default SearchBar;

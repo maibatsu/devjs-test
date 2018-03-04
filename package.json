@@ -5,6 +5,7 @@
   "dependencies": {
     "antd": "^3.2.2",
     "express": "^4.16.2",
+    "immutability-helper": "^2.6.6",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -26,5 +27,7 @@
     "nodemon": "^1.15.1"
   },
   "proxy": "http://localhost:4000/",
-  "engines": { "node": ">=8.9.4" }
+  "engines": {
+    "node": ">=8.9.4"
+  }
 }

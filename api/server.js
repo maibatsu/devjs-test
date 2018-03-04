@@ -68,37 +68,67 @@ const studios = [
   },
 ];
 const sortedStudios = studios.sort((itemA, itemB) => itemA.price - itemB.price);
+
 const prices = studios.map(item => item.price);
 const minPrice = Math.min.apply(null, prices);
 const maxPrice = Math.max.apply(null, prices);
-const filteredStudios = (list, min, max) =>
-  list.filter(item => item.price <= max && item.price >= min);
+
+const params = studios.map(item => item.params);
+const paramsConcat = [].concat(...params);
+const studioParams = Array.from(new Set(paramsConcat));
+
+const sortedByKeys = (studiosList, options) =>
+  studiosList.filter(item =>
+    item.params.some((par) => {
+      if (options.includes(par)) return true;
+      return false;
+    }));
+const sortedByPrice = (min, max, arr) => arr.filter(item => item.price >= min && item.price <= max);
+
+API.use(express.json());
 
 API.get('/api/getStudios', (req, res) => {
-  const { query: { minPrice, maxPrice } } = req;
-  const params = {
+  const resParams = {
     'Content-Type': 'application/json; charset=utf-8',
   };
 
-  res.set(params);
-
-  if (minPrice && maxPrice) {
-    const filtered = filteredStudios(sortedStudios, minPrice, maxPrice);
-
-    return res.send(filtered);
-  }
-
+  res.set(resParams);
   res.send(sortedStudios);
 });
 
 API.get('/api/getPrices', (req, res) => {
-  const params = {
+  const resParams = {
     'Content-Type': 'application/json; charset=utf-8',
   };
   const pricesParams = [minPrice, maxPrice];
 
-  res.set(params);
+  res.set(resParams);
   res.send(pricesParams);
+});
+
+API.get('/api/getParams', (req, res) => {
+  const resParams = {
+    'Content-Type': 'application/json; charset=utf-8',
+  };
+
+  res.set(resParams);
+  res.send(studioParams);
+});
+
+API.post('/api/getFilteredData', (req, res) => {
+  const resParams = {
+    'Content-Type': 'application/json; charset=utf-8',
+  };
+  res.set(resParams);
+
+  if (!req.body.selected.length) {
+    return res.send(sortedByPrice(req.body.minPrice, req.body.maxPrice, sortedStudios));
+  }
+
+  const byKeys = sortedByKeys(sortedStudios, req.body.selected);
+  const result = sortedByPrice(req.body.minPrice, req.body.maxPrice, byKeys);
+
+  res.send(result);
 });
 
 API.listen(4000, () => console.log('API on port: 4000'));

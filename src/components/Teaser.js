@@ -14,13 +14,9 @@ const Teaser = ({ name, price, view }) => {
 };
 
 Teaser.propTypes = {
-  data: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    view: PropTypes.arrayOf(PropTypes.string).isRequired,
-    params: PropTypes.arrayOf(PropTypes.string),
-    id: PropTypes.number.isRequired,
-  }),
+  name: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired,
+  view: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default Teaser;

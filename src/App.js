@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Row, Col, Layout } from 'antd';
+import update from 'immutability-helper';
+import { Row, Col, Layout, Tag } from 'antd';
 import logo from './logo.png';
 import './App.css';
 import Teaser from './components/Teaser';
@@ -8,7 +9,7 @@ import SearchBar from './components/SearchBar';
 
 class App extends Component {
   constructor(props) {
-    super(props);
+    super();
     this.state = {
       studios: {
         list: [],
@@ -23,8 +24,13 @@ class App extends Component {
         maxPrice: null,
         loaded: false,
       },
+      studioParams: [],
+      searchBar: {
+        selected: [],
+      },
     };
   }
+
   componentDidMount = () => {
     const fetchStudios = fetch(`/api/getStudios`)
       .then(response => {
@@ -52,6 +58,16 @@ class App extends Component {
         });
       })
       .catch(error => console.error(error));
+
+    const fetchParams = fetch(`/api/getParams`)
+      .then(response => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then(data => {
+        this.setState({ studioParams: data });
+      })
+      .catch(error => console.error(error));
   };
 
   handleFilterPriceTitle = value => {
@@ -66,33 +82,91 @@ class App extends Component {
     }));
   };
 
-  handleFilterPrice = value => {
-    const [min, max] = [...value];
-    const fetchStudios = fetch(`/api/getStudios?minPrice=${min}&maxPrice=${max}`)
+  handleFilterPrice = () => {
+    this.handleCheckFilter();
+  };
+
+  handleSearchSelect = val => {
+    const { searchBar: { selected } } = this.state;
+
+    if (selected.includes(val)) return;
+
+    const copy = [...selected, val];
+
+    this.handleCheckFilter(copy);
+
+    this.setState(prevState => ({
+      searchBar: {
+        selected: [...prevState.searchBar.selected, val],
+      },
+    }));
+  };
+
+  handleSearchSelectRemove = val => () => {
+    const { studioParams, searchBar: { selected } } = this.state;
+
+    if (!selected.includes(val)) return;
+
+    const itemIdx = selected.indexOf(val);
+    const copy = [...selected];
+    copy.splice(itemIdx, 1);
+
+    this.handleCheckFilter(copy);
+
+    this.setState(prevState => ({
+      searchBar: { selected: update(prevState.searchBar.selected, { $splice: [[itemIdx, 1]] }) },
+    }));
+  };
+
+  handleCheckFilter = (selected = this.state.searchBar.selected) => {
+    const { prices: { maxPrice, minPrice } } = this.state;
+    const postData = {
+      maxPrice,
+      minPrice,
+      selected,
+    };
+    const fetchFiltered = fetch(`/api/getFilteredData`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json;charset=utf-8',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(postData),
+    })
       .then(response => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
       })
       .then(data => {
-        this.setState({ studios: { list: data, loaded: true } });
+        this.setState({ studios: { list: data } });
       })
       .catch(error => console.error(error));
   };
 
-  getTeaser = () => {
-    const { studios: { list } } = this.state;
-    const teasers = list.map(item => <Teaser key={item.id} {...item} />);
+  getSearchBar = () => {
+    const { studioParams } = this.state;
 
-    return <div className="teasers-list">{teasers}</div>;
+    return <SearchBar params={studioParams} onSelect={this.handleSearchSelect} />;
   };
 
-  getSearchBar = () => {
-    const { studios: { list } } = this.state;
-    const arr = list.map(item => item.params);
-    const result = [].concat(...arr);
-    const data = Array.from(new Set(result));
+  getSearchKeys = () => {
+    const { searchBar: { selected } } = this.state;
 
-    return <SearchBar params={data} />;
+    return (
+      <div className="search-keys">
+        {selected.map(item => (
+          <Tag
+            key={item}
+            closable
+            onClose={this.handleSearchSelectRemove(item)}
+            style={{ fontSize: '1rem' }}
+            color="#2f65eb"
+          >
+            {item}
+          </Tag>
+        ))}
+      </div>
+    );
   };
 
   getFilterPrice = () => {
@@ -112,9 +186,16 @@ class App extends Component {
     );
   };
 
+  getTeaser = () => {
+    const { studios: { list } } = this.state;
+    const teasers = list.map(item => <Teaser key={item.id} {...item} />);
+
+    return <div className="teasers-list">{teasers}</div>;
+  };
+
   render() {
     const { Header, Content } = Layout;
-    const { studios, prices } = this.state;
+    const { studios, prices, searchBar: { selected } } = this.state;
 
     if (!studios.loaded && !prices.loaded) return null;
 
@@ -130,6 +211,7 @@ class App extends Component {
               <div className="filters-list">
                 <div className="filters-list__item filters-list__item--search">
                   {this.getSearchBar()}
+                  {this.getSearchKeys()}
                 </div>
                 <div className="filters-list__item">{this.getFilterPrice()}</div>
               </div>

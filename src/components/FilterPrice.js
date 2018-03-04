@@ -1,6 +1,6 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Slider, Card } from "antd";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Slider, Card } from 'antd';
 
 const FilterPrice = ({
   minPrice,
@@ -8,7 +8,7 @@ const FilterPrice = ({
   loaded,
   initValue: { min, max },
   onChange,
-  onAfterChange
+  onAfterChange,
 }) => {
   if (!loaded) return null;
 
@@ -33,9 +33,10 @@ const FilterPrice = ({
 FilterPrice.propTypes = {
   minPrice: PropTypes.number.isRequired,
   maxPrice: PropTypes.number.isRequired,
+  initValue: PropTypes.objectOf(PropTypes.number).isRequired,
   loaded: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
-  onAfterChange: PropTypes.func.isRequired
+  onAfterChange: PropTypes.func.isRequired,
 };
 
 export default FilterPrice;

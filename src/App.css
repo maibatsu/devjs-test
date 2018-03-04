@@ -17,7 +17,7 @@
 }
 
 .filters-list__item + .filters-list__item {
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .filter-range__title {
@@ -66,4 +66,8 @@
   color: #fff;
   padding: 0.2em 0.7em;
   border-radius: 3px 0 0 3px;
+}
+
+.search-bar + .search-keys {
+  margin-top: 1rem;
 }
