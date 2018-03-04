@@ -190,6 +190,8 @@ class App extends Component {
     const { studios: { list } } = this.state;
     const teasers = list.map(item => <Teaser key={item.id} {...item} />);
 
+    if (!list.length) return <h2>Студий по данному запросу не найдено.</h2>;
+
     return <div className="teasers-list">{teasers}</div>;
   };
 
