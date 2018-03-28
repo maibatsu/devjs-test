@@ -29,10 +29,10 @@ class App extends Component {
         selected: [],
       },
     };
-  }
+  };
 
   componentDidMount = () => {
-    const fetchStudios = fetch(`/api/getStudios`)
+    fetch(`/api/getStudios`)
       .then(response => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
@@ -42,7 +42,7 @@ class App extends Component {
       })
       .catch(error => console.error(error));
 
-    const fetchPrices = fetch(`/api/getPrices`)
+    fetch(`/api/getPrices`)
       .then(response => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
@@ -59,7 +59,7 @@ class App extends Component {
       })
       .catch(error => console.error(error));
 
-    const fetchParams = fetch(`/api/getParams`)
+    fetch(`/api/getParams`)
       .then(response => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
@@ -103,7 +103,7 @@ class App extends Component {
   };
 
   handleSearchSelectRemove = val => () => {
-    const { studioParams, searchBar: { selected } } = this.state;
+    const { searchBar: { selected } } = this.state;
 
     if (!selected.includes(val)) return;
 
@@ -125,7 +125,8 @@ class App extends Component {
       minPrice,
       selected,
     };
-    const fetchFiltered = fetch(`/api/getFilteredData`, {
+
+    fetch(`/api/getFilteredData`, {
       method: 'POST',
       headers: {
         Accept: 'application/json;charset=utf-8',
@@ -188,7 +189,7 @@ class App extends Component {
 
   getTeaser = () => {
     const { studios: { list } } = this.state;
-    const teasers = list.map(item => <Teaser key={item.id} {...item} />);
+    const teasers = list.map(item => <Teaser key={item.id} name={item.name} price={item.price} view={item.view} />);
 
     if (!list.length) return <h2>Студий по данному запросу не найдено.</h2>;
 
@@ -197,7 +198,7 @@ class App extends Component {
 
   render() {
     const { Header, Content } = Layout;
-    const { studios, prices, searchBar: { selected } } = this.state;
+    const { studios, prices } = this.state;
 
     if (!studios.loaded && !prices.loaded) return null;
 
